@@ -3,7 +3,7 @@ import * as L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet/dist/leaflet.css'
 import { useState } from 'react'
-import { MapContainer, TileLayer } from 'react-leaflet'
+import { LayersControl, MapContainer, TileLayer } from 'react-leaflet'
 import { EditControl } from './EditControl'
 import { GeoJSONFeatureGroup } from './GeoJSONFeatureGroup'
 
@@ -17,7 +17,11 @@ const initialView: L.LatLngExpression = { lat: 49.1895166, lng: -123.004237 }
 //   [37, -102.04],
 // ]
 
-export function Map() {
+interface IProps {
+  editMode: boolean
+}
+
+export function Map({ editMode }: IProps) {
   const [geoJSON, setGeoJSON] = useState<FeatureCollection>({
     type: 'FeatureCollection',
     features: [],
@@ -35,9 +39,16 @@ export function Map() {
         subdomains="abcd"
       />
 
-      {/* <MapHandler /> */}
-      <EditControl value={geoJSON} onChange={setGeoJSON} />
-      <GeoJSONFeatureGroup />
+      <LayersControl position="topright">
+        <LayersControl.Overlay name="City neighborhoods">
+          <GeoJSONFeatureGroup />
+        </LayersControl.Overlay>
+
+        <LayersControl.Overlay name="Custom boundaries">
+          {/* <MapHandler /> */}
+          <EditControl value={geoJSON} onChange={setGeoJSON} />
+        </LayersControl.Overlay>
+      </LayersControl>
     </MapContainer>
   )
 }
